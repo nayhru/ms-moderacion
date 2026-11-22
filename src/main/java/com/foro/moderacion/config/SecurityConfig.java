@@ -35,6 +35,9 @@ public class SecurityConfig {
                         // Cualquier usuario con sesion puede denunciar; el resto de la gestion es de moderadores
                         .requestMatchers(HttpMethod.POST, "/api/reportes").authenticated()
                         .requestMatchers("/api/reportes/**").hasAnyRole("MODERADOR", "ADMIN")
+                        // Consulta publica para saber si un tema o comentario esta baneado
+                        .requestMatchers(HttpMethod.GET, "/api/sanciones/activas").permitAll()
+                        .requestMatchers("/api/sanciones/**").hasAnyRole("MODERADOR", "ADMIN")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(servidor -> servidor
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(convertidorRoles()))
