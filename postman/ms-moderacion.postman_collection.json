@@ -1,0 +1,1083 @@
+{
+  "info": {
+    "name": "ms-moderacion",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Obtener tokens (requiere ms-usuarios)",
+      "item": [
+        {
+          "name": "Login ADMIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUsuarios}}/api/auth/login",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreUsuario\": \"admin\",\n  \"clave\": \"Admin2026*\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "pm.collectionVariables.set('tokenAdmin', r.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login MODERADOR",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUsuarios}}/api/auth/login",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreUsuario\": \"moderador\",\n  \"clave\": \"Moderador2026*\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "pm.collectionVariables.set('tokenModerador', r.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login USUARIO camila.rojas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUsuarios}}/api/auth/login",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreUsuario\": \"camila.rojas\",\n  \"clave\": \"Usuario2026*\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "pm.collectionVariables.set('tokenUsuario', r.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login USUARIO diego.soto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUsuarios}}/api/auth/login",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombreUsuario\": \"diego.soto\",\n  \"clave\": \"Usuario2026*\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "pm.collectionVariables.set('tokenOtro', r.token);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Consulta publica de baneo",
+      "item": [
+        {
+          "name": "GET Comentario 1 oculto (baneado)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/sanciones/activas?tipo=COMENTARIO&id=1",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Tema 3 con advertencia (no baneado)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/sanciones/activas?tipo=TEMA&id=3",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Falta el parametro id (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/sanciones/activas?tipo=TEMA",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Tipo de contenido invalido (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/sanciones/activas?tipo=FORO&id=1",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Reportes",
+      "item": [
+        {
+          "name": "POST Reportar tema (USUARIO)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/reportes",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenUsuario}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoContenido\": \"TEMA\",\n  \"idContenido\": 2,\n  \"motivo\": \"Contenido ofensivo hacia otro usuario\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "pm.collectionVariables.set('idReporte', r.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Reporte pendiente repetido (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/reportes",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenUsuario}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoContenido\": \"TEMA\",\n  \"idContenido\": 2,\n  \"motivo\": \"Lo vuelvo a reportar por lo mismo\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Reportar sin token (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/reportes",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoContenido\": \"TEMA\",\n  \"idContenido\": 2,\n  \"motivo\": \"Contenido ofensivo hacia otro usuario\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Reporte con datos invalidos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/reportes",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenUsuario}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idContenido\": -1,\n  \"motivo\": \"corto\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Reporte con tipo invalido (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/reportes",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenUsuario}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoContenido\": \"FORO\",\n  \"idContenido\": 1,\n  \"motivo\": \"Motivo suficientemente largo\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Listar reportes sin permiso (403)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/reportes",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenUsuario}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Listar reportes (MODERADOR)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/reportes",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Listar reportes pendientes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/reportes?estado=PENDIENTE",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Obtener reporte",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/reportes/{{idReporte}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Reporte inexistente (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/reportes/9999",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Descartar reporte",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/reportes/{{idReporte}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"DESCARTADO\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Reabrir reporte",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/reportes/{{idReporte}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"PENDIENTE\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Reabrir reporte con sancion activa (409)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/reportes/1",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"PENDIENTE\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Reporte con sanciones (409)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base}}/api/reportes/1",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Sanciones",
+      "item": [
+        {
+          "name": "POST Sancionar sin permiso (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/sanciones",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenOtro}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoContenido\": \"TEMA\",\n  \"idContenido\": 2,\n  \"tipoSancion\": \"OCULTAR\",\n  \"motivo\": \"Lenguaje ofensivo hacia otro usuario\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Ocultar tema reportado (MODERADOR)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/sanciones",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoContenido\": \"TEMA\",\n  \"idContenido\": 2,\n  \"tipoSancion\": \"OCULTAR\",\n  \"motivo\": \"Lenguaje ofensivo hacia otro usuario\",\n  \"reporteId\": {{idReporte}}\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "pm.collectionVariables.set('idSancion', r.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET Reporte queda RESUELTO",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/reportes/{{idReporte}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Sancion repetida (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/sanciones",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoContenido\": \"TEMA\",\n  \"idContenido\": 2,\n  \"tipoSancion\": \"OCULTAR\",\n  \"motivo\": \"Otra vez el mismo contenido\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Advertencia sobre contenido oculto (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/sanciones",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoContenido\": \"TEMA\",\n  \"idContenido\": 2,\n  \"tipoSancion\": \"ADVERTENCIA\",\n  \"motivo\": \"Advertencia sobre el mismo tema\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Eliminar siendo MODERADOR (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/sanciones",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoContenido\": \"TEMA\",\n  \"idContenido\": 4,\n  \"tipoSancion\": \"ELIMINAR\",\n  \"motivo\": \"Tema duplicado sin aporte nuevo\",\n  \"reporteId\": 2\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Eliminar tema (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/sanciones",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoContenido\": \"TEMA\",\n  \"idContenido\": 4,\n  \"tipoSancion\": \"ELIMINAR\",\n  \"motivo\": \"Tema duplicado sin aporte nuevo\",\n  \"reporteId\": 2\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "pm.collectionVariables.set('idSancionEliminar', r.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST Reporte de otro contenido (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/sanciones",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoContenido\": \"TEMA\",\n  \"idContenido\": 1,\n  \"tipoSancion\": \"OCULTAR\",\n  \"motivo\": \"Motivo suficientemente largo\",\n  \"reporteId\": 3\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Tipo de sancion invalido (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/sanciones",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoContenido\": \"TEMA\",\n  \"idContenido\": 1,\n  \"tipoSancion\": \"BANEAR\",\n  \"motivo\": \"Motivo suficientemente largo\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Listar sanciones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/sanciones",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Listar sanciones OCULTAR activas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/sanciones?tipoSancion=OCULTAR&activa=true",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Listar sanciones sobre temas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/sanciones?tipoContenido=TEMA",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Obtener sancion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/sanciones/{{idSancion}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Sancion inexistente (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base}}/api/sanciones/9999",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Cambiar a advertencia",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base}}/api/sanciones/{{idSancion}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoSancion\": \"ADVERTENCIA\",\n  \"motivo\": \"Se rebaja a advertencia tras revisar el tema\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Revocar sancion",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{base}}/api/sanciones/{{idSancion}}/revocar",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Revocar sancion ya revocada (409)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{base}}/api/sanciones/{{idSancion}}/revocar",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Eliminar sancion",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base}}/api/sanciones/{{idSancion}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenModerador}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Eliminar sancion ELIMINAR (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base}}/api/sanciones/{{idSancionEliminar}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Eliminar reporte sin sanciones",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base}}/api/reportes/{{idReporte}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAdmin}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base",
+      "value": "http://localhost:8083",
+      "type": "string"
+    },
+    {
+      "key": "baseUsuarios",
+      "value": "http://localhost:8081",
+      "type": "string"
+    },
+    {
+      "key": "tokenAdmin",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tokenModerador",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tokenUsuario",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "tokenOtro",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "idReporte",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "idSancion",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "idSancionEliminar",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
