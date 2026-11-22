@@ -9,11 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import tools.jackson.databind.exc.InvalidFormatException;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -48,10 +51,32 @@ public class GlobalExceptionHandler {
         return responder(HttpStatus.FORBIDDEN, ex.getMessage(), request, null);
     }
 
+    @ExceptionHandler(SolicitudInvalidaException.class)
+    public ResponseEntity<ErrorResponse> solicitudInvalida(SolicitudInvalidaException ex, HttpServletRequest request) {
+        log.warn("Solicitud rechazada en {} {}: {}", request.getMethod(), request.getRequestURI(), ex.getMessage());
+        return responder(HttpStatus.BAD_REQUEST, ex.getMessage(), request, null);
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> jsonInvalido(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        // Un enum mal escrito (por ejemplo "tipoSancion": "BANEAR") se informa con los valores permitidos
+        if (ex.getCause() instanceof InvalidFormatException formato && formato.getTargetType().isEnum()) {
+            String campo = formato.getPath().isEmpty() ? "el campo" : formato.getPath().getLast().getPropertyName();
+            String mensaje = "El valor '" + formato.getValue() + "' no es valido para " + campo + ". Valores permitidos: "
+                    + Arrays.toString(formato.getTargetType().getEnumConstants());
+            log.warn("{} en {} {}", mensaje, request.getMethod(), request.getRequestURI());
+            return responder(HttpStatus.BAD_REQUEST, mensaje, request, null);
+        }
         log.warn("JSON no legible en {} {}", request.getMethod(), request.getRequestURI());
         return responder(HttpStatus.BAD_REQUEST, "El cuerpo de la solicitud no es un JSON valido", request, null);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> parametroFaltante(MissingServletRequestParameterException ex,
+                                                           HttpServletRequest request) {
+        String mensaje = "Falta el parametro obligatorio " + ex.getParameterName();
+        log.warn("{} en {} {}", mensaje, request.getMethod(), request.getRequestURI());
+        return responder(HttpStatus.BAD_REQUEST, mensaje, request, null);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
