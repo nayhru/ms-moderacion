@@ -1,0 +1,10 @@
+target/
+.git/
+.idea/
+.vscode/
+.env
+Wallet_*/
+wallet/
+*.sso
+*.p12
+*.jks
